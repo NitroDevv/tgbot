@@ -1,4 +1,5 @@
 aiogram==2.25.1
 aiofiles==23.2.1
+Telethon
 
 aiohttp
