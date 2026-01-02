@@ -34,7 +34,15 @@ DEFAULT_REFERRAL_AMOUNT = 300   # <-- BU QATOR BO‘LISHI SHART!
 PAYMENT_CARD = "4790920024921400"
 
 # Bot token (o'zgartiring)
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+# Tokenni xavfsiz o'qish va tozalash
+BOT_TOKEN_RAW = os.getenv("BOT_TOKEN", "")
+BOT_TOKEN = BOT_TOKEN_RAW.strip()
+
+if not BOT_TOKEN:
+    logger.critical("BOT_TOKEN topilmadi! .env yoki Environment Variables ni tekshiring.")
+else:
+    logger.info(f"BOT_TOKEN yuklandi: {BOT_TOKEN[:5]}...{BOT_TOKEN[-5:]}")
+
 
 # Bot va Dispatcher yaratish
 bot = Bot(token=BOT_TOKEN)
