@@ -1,0 +1,32 @@
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# User files
+user_bots/
+payments/
+bot_templates/
+temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+

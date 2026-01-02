@@ -1,0 +1,1 @@
+web: python make.py
