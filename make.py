@@ -13,6 +13,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 import aiofiles
 from aiohttp import web
+import aiohttp
 
 # Logging sozlash
 logging.basicConfig(
@@ -2277,6 +2278,31 @@ async def on_startup(dp):
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
     logger.info(f"Web server started on port {port}")
+
+    # Keep-alive background taskini ishga tushirish
+    asyncio.create_task(keep_alive_ping())
+
+async def keep_alive_ping():
+    """Bot o'ziga o'zi ping yuborib turishi uchun funksiya"""
+    url = os.getenv("RENDER_EXTERNAL_URL")
+    if not url:
+        # Agar bu o'zgaruvchi yo'q bo'lsa (localda), ishlamaydi
+        if os.getenv("RENDER"): # Faqat Renderda log yozish
+            logger.warning("RENDER_EXTERNAL_URL topilmadi, keep-alive ishlamaydi.")
+        return
+
+    logger.info(f"Keep-alive ping boshlandi: {url}")
+    while True:
+        await asyncio.sleep(300)  # 5 daqiqa (300 soniya)
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        logger.info(f"Self-ping muvaffaqiyatli: {url}")
+                    else:
+                        logger.warning(f"Self-ping xatosi. Status: {response.status}")
+        except Exception as e:
+            logger.error(f"Self-ping ulanish xatosi: {e}")
 
 
 if __name__ == '__main__':
