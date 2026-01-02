@@ -34,7 +34,7 @@ DEFAULT_REFERRAL_AMOUNT = 300   # <-- BU QATOR BO‘LISHI SHART!
 PAYMENT_CARD = "4790920024921400"
 
 # Bot token (o'zgartiring)
-BOT_TOKEN = "8370050749:AAF8fwSgCuS6piUWZoWoEGqCwlwUu7SOTfw"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Bot va Dispatcher yaratish
 bot = Bot(token=BOT_TOKEN)
