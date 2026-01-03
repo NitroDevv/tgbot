@@ -1429,6 +1429,10 @@ async def process_bot_token(message: types.Message, state: FSMContext):
                         content = content.replace("'tests/", "'")
                         content = content.replace('"tests/', '"')
                         
+                        # ADMIN_ID -> ADMIN_IDS[0] (NameError oldini olish uchun)
+                        # Faqat mustaqil so'z bo'lsa almashtiramiz (regex yordamida)
+                        content = re.sub(r'\bADMIN_ID\b', 'ADMIN_IDS[0]', content)
+                        
                         async with aiofiles.open(path, 'w', encoding='utf-8') as f:
                             await f.write(content)
                     except Exception as e:
