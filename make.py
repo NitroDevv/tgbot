@@ -1535,7 +1535,7 @@ async def cmd_view_logs(message: types.Message):
         try:
             with open(log_file, "r", encoding="utf-8") as f:
                 logs = f.read()[-1000:] 
-            await message.answer(f"📋 **Bot loglari (oxirgi 1000 belgi):**\n\n<code>{logs}</code>", parse_mode="HTML")
+            await message.answer(f"📋 **Bot loglari (oxirgi 1000 belgi):**\n\n{logs}")
         except Exception as e:
             await message.answer(f"Log o'qishda xato: {e}")
     else:
