@@ -1513,7 +1513,7 @@ async def cmd_view_logs(message: types.Message):
     user_id = message.from_user.id
     
     # Foydalanuvchining botini topish
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("SELECT bot_id FROM user_bots WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
     res = cursor.fetchone()
