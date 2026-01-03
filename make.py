@@ -1422,6 +1422,13 @@ async def process_bot_token(message: types.Message, state: FSMContext):
                             content = await f.read()
                         content = content.replace("YOUR_BOT_TOKEN", token)
                         content = re.sub(r'(BOT_TOKEN|API_TOKEN|token|API_KEY)\s*[:=]\s*[\'"].*?[\'"]', f'\\1 = "{token}"', content, flags=re.IGNORECASE)
+                        
+                        # SQLite bazasi uchun noto'g'ri yo'llarni to'g'irlash (../tests/ kabi)
+                        content = content.replace("'../tests/", "'")
+                        content = content.replace('"../tests/', '"')
+                        content = content.replace("'tests/", "'")
+                        content = content.replace('"tests/', '"')
+                        
                         async with aiofiles.open(path, 'w', encoding='utf-8') as f:
                             await f.write(content)
                     except Exception as e:
