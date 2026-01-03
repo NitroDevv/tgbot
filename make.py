@@ -1421,7 +1421,7 @@ async def process_bot_token(message: types.Message, state: FSMContext):
                         async with aiofiles.open(path, 'r', encoding='utf-8') as f:
                             content = await f.read()
                         content = content.replace("YOUR_BOT_TOKEN", token)
-                        content = re.sub(r'(BOT_TOKEN|token)\s*[:=]\s*[\'"].*?[\'"]', f'\\1 = "{token}"', content, flags=re.IGNORECASE)
+                        content = re.sub(r'(BOT_TOKEN|API_TOKEN|token|API_KEY)\s*[:=]\s*[\'"].*?[\'"]', f'\\1 = "{token}"', content, flags=re.IGNORECASE)
                         async with aiofiles.open(path, 'w', encoding='utf-8') as f:
                             await f.write(content)
                     except Exception as e:
@@ -1506,6 +1506,40 @@ async def process_bot_token(message: types.Message, state: FSMContext):
         await message.answer(f"Xatolik:\n<code>{str(e)[:500]}</code>", parse_mode="HTML")
         await state.finish()
 
+
+@dp.message_handler(commands=['logs'])
+async def cmd_view_logs(message: types.Message):
+    """Foydalanuvchi o'zining bot loglarini ko'rishi uchun"""
+    user_id = message.from_user.id
+    
+    # Foydalanuvchining botini topish
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT bot_id FROM user_bots WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
+    res = cursor.fetchone()
+    conn.close()
+    
+    if not res:
+        await message.answer("Sizda hali bot yo'q!")
+        return
+        
+    # Oxirgi bot papkasini topish
+    import glob
+    bot_dirs = sorted(glob.glob(f"user_bots/bot_{user_id}_*"), reverse=True)
+    if not bot_dirs:
+        await message.answer("Bot loglari topilmadi!")
+        return
+        
+    log_file = os.path.join(bot_dirs[0], "log.txt")
+    if os.path.exists(log_file):
+        try:
+            with open(log_file, "r", encoding="utf-8") as f:
+                logs = f.read()[-1000:] 
+            await message.answer(f"📋 **Bot loglari (oxirgi 1000 belgi):**\n\n<code>{logs}</code>", parse_mode="HTML")
+        except Exception as e:
+            await message.answer(f"Log o'qishda xato: {e}")
+    else:
+        await message.answer("Log fayli hali yaratilmagan.")
 
 # Admin callbacks
 @dp.callback_query_handler(lambda c: c.data == "admin_add_sub")
